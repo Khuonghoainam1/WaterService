@@ -1,0 +1,125 @@
+﻿@{
+    ViewBag.Title = "Trang quản lý";
+}
+
+<!-- Bootstrap 5 + Icons + Chart.js + AOS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 bg-dark text-white vh-100 p-3 d-flex flex-column">
+            <h4 class="text-center mb-4"><i class="bi bi-speedometer2"></i> Quản lý</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="@Url.Action("UserManager", "WaterUser")">
+                        <i class="bi bi-people-fill"></i> Hộ dân
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="@Url.Action("BillAndReading", "Bill")">
+                        <i class="bi bi-receipt"></i> Hóa đơn & Ghi số
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="@Url.Action("Index", "BaoCao")">
+                        <i class="bi bi-bar-chart-line"></i> Báo cáo
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="@Url.Action("Index", "ThongBao")">
+                        <i class="bi bi-bell"></i> Thông báo
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="@Url.Action("Index", "User")">
+                        <i class="bi bi-bell"></i> Search
+                    </a>
+                </li>
+            </ul>
+            <div class="mt-auto">
+                <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light w-100">
+                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="col-md-10 p-4">
+            <h2 class="mb-4" data-aos="fade-right">📊 Bảng điều khiển</h2>
+
+            <!-- Thống kê nhanh -->
+            <div class="row mb-4">
+                <div class="col-md-4" data-aos="zoom-in">
+                    <div class="card text-center shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="card-title">Số hộ chưa thanh toán</h5>
+                            <p class="display-6 text-danger fw-bold">15</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="card text-center shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="card-title">Tổng doanh thu kỳ này</h5>
+                            <p class="display-6 text-success fw-bold">120,000,000 đ</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="card text-center shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="card-title">Tổng sản lượng nước</h5>
+                            <p class="display-6 text-primary fw-bold">850 m³</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biểu đồ -->
+            <div class="card mb-4 shadow-sm border-0" data-aos="fade-up">
+                <div class="card-body">
+                    <h5 class="card-title">Biểu đồ tiêu thụ nước</h5>
+                    <canvas id="waterChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Lối tắt -->
+            <h4 class="mb-3" data-aos="fade-right">⚡ Lối tắt</h4>
+            <div class="d-flex gap-3" data-aos="fade-up">
+                <a href="@Url.Action("NhapChiSo", "HoaDon")" class="btn btn-primary btn-lg shadow">
+                    <i class="bi bi-plus-circle"></i> Nhập chỉ số kỳ mới
+                </a>
+                <a href="@Url.Action("DanhSachNo", "HoDan")" class="btn btn-warning btn-lg shadow">
+                    <i class="bi bi-list-check"></i> Xem danh sách hộ nợ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+    AOS.init();
+
+    // Biểu đồ Chart.js
+    var ctx = document.getElementById('waterChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4'],
+            datasets: [{
+                label: 'Sản lượng nước (m³)',
+                data: [200, 250, 300, 280],
+                borderColor: 'blue',
+                fill: false,
+                tension: 0.3
+            }]
+        }
+    });
+</script>

@@ -1,0 +1,34 @@
+﻿@model WebThanhToanTienNuoc.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Đăng nhập";
+}
+
+<div class="d-flex justify-content-center align-items-center" style="height:100vh;">
+    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 12px;">
+        <h3 class="text-center mb-4">Đăng nhập hệ thống</h3>
+
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "needs-validation" }))
+        {
+            <div class="form-group mb-3">
+                <label for="username" class="form-label">Tên đăng nhập</label>
+                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "Nhập tên đăng nhập" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="password" class="form-label">Mật khẩu</label>
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Nhập mật khẩu" })
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger text-center mt-3" role="alert">
+                @Model.ErrorMessage
+            </div>
+        }
+    </div>
+</div>
+

@@ -1,0 +1,95 @@
+﻿@model List<WebThanhToanTienNuoc.Models.Bill>
+
+@{
+    ViewData["Title"] = "Hóa đơn & Ghi số";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">💧 Hóa đơn & Ghi số</h2>
+
+    <!-- Form lọc -->
+    <form method="get" asp-action="BillAndReading" class="row g-2 mb-3">
+        <div class="col-md-6">
+            <input type="text" name="keyword" value="@ViewBag.Keyword"
+                   class="form-control" placeholder="🔍 Tìm theo tên chủ hộ..." />
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-outline-primary w-100">
+                <i class="bi bi-search"></i> Tìm kiếm
+            </button>
+        </div>
+    </form>
+
+    <!-- Form nhập liệu -->
+    <form asp-action="BillAndReading" method="post" class="card shadow-sm p-4">
+        <input type="hidden" name="keyword" value="@ViewBag.Keyword" />
+
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <label class="form-label">Tháng</label>
+                <input type="number" name="Thang" value="@ViewBag.Thang" min="1" max="12" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Năm</label>
+                <input type="number" name="Nam" value="@ViewBag.Nam" class="form-control" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Đơn giá nước (VNĐ/m³)</label>
+                <input type="number" name="DonGia" value="@ViewBag.DonGia" class="form-control" />
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered align-middle">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Mã KH</th>
+                        <th>Tên chủ hộ</th>
+                        <th>Chỉ số cũ</th>
+                        <th>Chỉ số mới</th>
+                        <th>Thực dùng</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Model[i].MaKH
+                                <input type="hidden" asp-for="@Model[i].MaKH" />
+                            </td>
+                            <td>
+                                @Model[i].TenChuHo
+                                <input type="hidden" asp-for="@Model[i].TenChuHo" />
+                            </td>
+                            <td>
+                                @Model[i].ChiSoCu
+                                <input type="hidden" asp-for="@Model[i].ChiSoCu" />
+                            </td>
+                            <td>
+                                <input type="number" asp-for="@Model[i].ChiSoMoi" class="form-control" />
+                            </td>
+                            <td>@Model[i].SoTieuThu</td>
+                            <td>@Model[i].ThanhTien.ToString("N0") ₫</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-grid mt-3">
+            <button type="submit" class="btn btn-success btn-lg">
+                💾 Lưu và Tạo hóa đơn
+            </button>
+        </div>
+    </form>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            ✅ @ViewBag.Message
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+</div>

@@ -1,0 +1,35 @@
+﻿@model WebThanhToanTienNuoc.Models.Bill
+@{
+    ViewData["Title"]="Thanh toán hóa đơn";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">💳 Thanh toán hóa đơn</h2>
+
+    <div class="card mx-auto shadow-sm" style="max-width:500px;">
+        <div class="card-body">
+            <p><b>Mã KH:</b> @Model.MaKH</p>
+            <p><b>Chủ hộ:</b> @Model.TenChuHo</p>
+            <p><b>Kỳ hóa đơn:</b> @Model.KyHoaDon</p>
+            <p><b>Tổng tiền:</b> <span class="text-danger fw-bold">@Model.ThanhTien.ToString("N0") VNĐ</span></p>
+            <p><b>Trạng thái:</b> @(Model.DaThanhToan ? "Đã thanh toán" : "Chưa thanh toán")</p>
+
+            @if(!Model.DaThanhToan)
+            {
+                <form method="post" asp-action="Pay">
+                    <input type="hidden" name="billId" value="@Model.Id"/>
+                    <button type="submit" class="btn btn-success w-100">Thanh toán ngay</button>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-success">Hóa đơn đã được thanh toán!</div>
+            }
+
+            @if(ViewBag.Message != null)
+            {
+                <div class="alert alert-info mt-3">@ViewBag.Message</div>
+            }
+        </div>
+    </div>
+</div>

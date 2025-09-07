@@ -1,0 +1,98 @@
+﻿@model WebThanhToanTienNuoc.Models.Customer
+
+@{
+    ViewData["Title"] = "Kết quả tra cứu";
+    var billNow = Model.Bills.LastOrDefault(); // Kỳ mới nhất
+}
+
+<div class="container mt-5">
+    <h2 class="text-center text-success mb-4">KẾT QUẢ TRA CỨU</h2>
+
+    <!-- Thông tin chủ hộ -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5>👤 Chủ hộ: @Model.TenChuHo</h5>
+            <p><b>Mã KH:</b> @Model.MaKH</p>
+            <p><b>Địa chỉ:</b> @Model.DiaChi.ThonXom @(!string.IsNullOrEmpty(Model.DiaChi.GhiChu) ? $"({Model.DiaChi.GhiChu})" : "")</p>
+            <p><b>SĐT:</b> @Model.SoDienThoai</p>
+        </div>
+    </div>
+
+    <!-- Hóa đơn kỳ này -->
+    @if (billNow != null)
+    {
+        <div class="card mb-4 shadow border-2">
+            <div class="card-header bg-info text-white">
+                <h4>💧 Hóa đơn kỳ @billNow.KyHoaDon</h4>
+            </div>
+            <div class="card-body">
+                <p>
+                    <b>Trạng thái:</b>
+                    @if (billNow.DaThanhToan)
+                    {
+                        <span class="badge bg-success">ĐÃ THANH TOÁN</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">CHƯA THANH TOÁN</span>
+                    }
+                </p>
+                <p><b>Chỉ số cũ:</b> @billNow.ChiSoCu</p>
+                <p><b>Chỉ số mới:</b> @billNow.ChiSoMoi</p>
+                <p><b>Lượng nước dùng:</b> @billNow.SoTieuThu m³</p>
+                <p><b>Đơn giá:</b> @billNow.DonGia.ToString("N0") VNĐ/m³</p>
+                <p><b>Tổng tiền:</b> <span class="text-danger fw-bold">@billNow.ThanhTien.ToString("N0") VNĐ</span></p>
+            </div>
+        </div>
+    }
+
+    <!-- Lịch sử các kỳ trước -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h5>📜 Lịch sử hóa đơn</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Kỳ</th>
+                        <th>Chỉ số cũ</th>
+                        <th>Chỉ số mới</th>
+                        <th>Sử dụng (m³)</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model.Bills.OrderByDescending(x => x.KyHoaDon))
+                    {
+                        <tr>
+                            <td>@b.KyHoaDon</td>
+                            <td>@b.ChiSoCu</td>
+                            <td>@b.ChiSoMoi</td>
+                            <td>@b.SoTieuThu</td>
+                            <td>@b.DonGia.ToString("N0")</td>
+                            <td>@b.ThanhTien.ToString("N0")</td>
+                            <td>
+                                @if (b.DaThanhToan)
+                                {
+                                    <span class="badge bg-success">Đã TT</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Chưa TT</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Thông tin hỗ trợ -->
+    <div class="alert alert-warning">
+        📞 Liên hệ hỗ trợ: <b>0912 345 678</b> (UBND xã ABC)
+    </div>
+</div>

@@ -1,0 +1,32 @@
+﻿@model WebThanhToanTienNuoc.Models.User
+
+@{
+    ViewData["Title"] = "Thêm hộ dân mới";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-3">Thêm hộ dân mới</h2>
+
+    <form asp-action="Create" method="post" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Mã KH</label>
+            <input asp-for="MaKH" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Tên chủ hộ</label>
+            <input asp-for="TenChuHo" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Địa chỉ</label>
+            <input asp-for="DiaChi" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Số điện thoại</label>
+            <input asp-for="SoDT" class="form-control" />
+        </div>
+        <div class="col-12 text-end">
+            <button type="submit" class="btn btn-success">Lưu</button>
+            <a asp-area="Admin" asp-controller="HoDan" asp-action="Index" class="btn btn-secondary">Hủy</a>
+        </div>
+    </form>
+</div>

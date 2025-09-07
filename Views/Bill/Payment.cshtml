@@ -1,0 +1,60 @@
+﻿@model List<WebThanhToanTienNuoc.Models.Invoice>
+@{
+    ViewData["Title"] = "Thanh toán hóa đơn";
+}
+
+<div class="container mt-4">
+    <h2>Danh sách hóa đơn</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+
+    <table class="table table-striped mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã KH</th>
+                <th>Tên khách hàng</th>
+                <th>Kỳ</th>
+                <th>Số tiền (VNĐ)</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var inv in Model)
+            {
+                <tr>
+                    <td>@inv.CustomerCode</td>
+                    <td>@inv.CustomerName</td>
+                    <td>@inv.Period</td>
+                    <td>@inv.TotalAmount.ToString("N0")</td>
+                    <td>
+                        @if (inv.Paid)
+                        {
+                            <span class="badge bg-success">Đã thanh toán</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Chưa thanh toán</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!inv.Paid)
+                        {
+                            <form method="post" asp-action="Pay">
+                                <input type="hidden" name="id" value="@inv.Id" />
+                                <button class="btn btn-primary btn-sm">Thanh toán</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary btn-sm" disabled>Đã thanh toán</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
