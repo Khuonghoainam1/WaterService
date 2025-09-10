@@ -17,6 +17,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
+//test 
 
 app.MapStaticAssets();
 
