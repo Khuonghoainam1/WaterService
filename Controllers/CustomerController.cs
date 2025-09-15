@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
-using WaterService.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Net;
+using WaterService.Models;
 
 namespace WaterService.Controllers
 {
@@ -18,26 +19,32 @@ namespace WaterService.Controllers
         }
 
         // GET: Customer
-        public IActionResult Index(string? search, string? status, DateTime? dateFrom, DateTime? dateTo, int page = 1, int pageSize = 20)
+        public IActionResult Index(string? search, string? status, DateTime? dateFrom, string? address, DateTime? dateTo, int page = 1, int pageSize = 20)
         {
             var query = _customers.AsQueryable();
 
-            // Apply search filter
+            // Search
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(c => 
+                query = query.Where(c =>
                     c.CustomerCode.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                     c.HouseholdHeadName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                     c.PhoneNumber.Contains(search, StringComparison.OrdinalIgnoreCase));
             }
 
-            // Apply status filter
+            // Status
             if (!string.IsNullOrEmpty(status) && Enum.TryParse<CustomerStatus>(status, out var statusEnum))
             {
                 query = query.Where(c => c.Status == statusEnum);
             }
 
-            // Apply date range filter
+            // Address
+            if (!string.IsNullOrEmpty(address))
+            {
+                query = query.Where(c => c.Address.Contains(address, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Date range
             if (dateFrom.HasValue)
             {
                 query = query.Where(c => c.RegistrationDate >= dateFrom.Value);
@@ -47,7 +54,7 @@ namespace WaterService.Controllers
                 query = query.Where(c => c.RegistrationDate <= dateTo.Value);
             }
 
-            // Calculate pagination
+            // Pagination
             var totalCount = query.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
             var customers = query
@@ -66,6 +73,7 @@ namespace WaterService.Controllers
                 CurrentPage = page,
                 TotalPages = totalPages,
                 TotalCount = totalCount,
+                Address = address,
                 PageSize = pageSize
             };
 
@@ -255,56 +263,45 @@ namespace WaterService.Controllers
         {
             if (_customers.Any()) return;
 
-            var sampleCustomers = new List<Customer>
+            var random = new Random();
+            var sampleFirstNames = new[] { "Nguyen", "Tran", "Le", "Pham", "Hoang", "Dang", "Bui", "Do", "Phan", "Vu" };
+            var sampleLastNames = new[] { "Anh", "Binh", "Cuong", "Dung", "Hoa", "Hung", "Khanh", "Linh", "Minh", "Nam", "Phong", "Quang", "Son", "Trang", "Tuan" };
+            var sampleHamlets = new[] { "Minh Khai", "Quang Trung", "Hồng Quang" };
+
+            var sampleCustomers = new List<Customer>();
+
+            for (int i = 0; i < 40; i++)
             {
-                new Customer
+                string firstName = sampleFirstNames[random.Next(sampleFirstNames.Length)];
+                string lastName = sampleLastNames[random.Next(sampleLastNames.Length)];
+                string fullName = $"{firstName} {lastName}";
+
+                string phone = $"09{random.Next(10000000, 99999999)}";
+
+                string emailName = $"{firstName.ToLower()}{lastName.ToLower()}{random.Next(100, 999)}";
+                string email = $"{emailName}@example.com";
+
+                var customer = new Customer
                 {
                     Id = _nextCustomerId++,
                     CustomerCode = $"C{_nextCustomerCode++:D6}",
-                    HouseholdHeadName = "Nguyen Van A",
-                    Address = "123 Main Street, District 1, HCMC",
-                    PhoneNumber = "0901234567",
-                    Email = "nguyenvana@email.com",
-                    RegistrationDate = new DateTime(2023, 1, 15),
-                    Status = CustomerStatus.Active,
-                    Notes = "Regular customer",
-                    CreatedAt = DateTime.UtcNow.AddDays(-365),
-                    UpdatedAt = DateTime.UtcNow.AddDays(-30)
-                },
-                new Customer
-                {
-                    Id = _nextCustomerId++,
-                    CustomerCode = $"C{_nextCustomerCode++:D6}",
-                    HouseholdHeadName = "Tran Thi B",
-                    Address = "456 Second Street, District 2, HCMC",
-                    PhoneNumber = "0901234568",
-                    Email = "tranthib@email.com",
-                    RegistrationDate = new DateTime(2023, 3, 20),
-                    Status = CustomerStatus.Active,
-                    Notes = "Commercial customer",
-                    CreatedAt = DateTime.UtcNow.AddDays(-300),
-                    UpdatedAt = DateTime.UtcNow.AddDays(-15)
-                },
-                new Customer
-                {
-                    Id = _nextCustomerId++,
-                    CustomerCode = $"C{_nextCustomerCode++:D6}",
-                    HouseholdHeadName = "Le Van C",
-                    Address = "789 Third Street, District 3, HCMC",
-                    PhoneNumber = "0901234569",
-                    Email = "levanc@email.com",
-                    RegistrationDate = new DateTime(2023, 6, 10),
-                    Status = CustomerStatus.Inactive,
-                    Notes = "Temporarily inactive",
-                    CreatedAt = DateTime.UtcNow.AddDays(-200),
-                    UpdatedAt = DateTime.UtcNow.AddDays(-5)
-                }
-            };
+                    HouseholdHeadName = fullName,
+                    Address = sampleHamlets[random.Next(sampleHamlets.Length)],
+                    PhoneNumber = phone,
+                    Email = email,
+                    RegistrationDate = DateTime.UtcNow.AddDays(-random.Next(100, 500)),
+                    Status = random.Next(2) == 0 ? CustomerStatus.Active : CustomerStatus.Inactive,
+                    Notes = "Auto generated sample customer",
+                    CreatedAt = DateTime.UtcNow.AddDays(-random.Next(200, 400)),
+                    UpdatedAt = DateTime.UtcNow.AddDays(-random.Next(1, 100))
+                };
+
+                sampleCustomers.Add(customer);
+            }
 
             _customers.AddRange(sampleCustomers);
         }
     }
-
     public class CustomerIndexViewModel
     {
         public List<Customer> Customers { get; set; } = new List<Customer>();
@@ -316,5 +313,8 @@ namespace WaterService.Controllers
         public int TotalPages { get; set; }
         public int TotalCount { get; set; }
         public int PageSize { get; set; }
+        public string ? Address { get; set; }
+
+        
     }
 }
